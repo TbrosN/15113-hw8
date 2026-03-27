@@ -65,3 +65,19 @@ The question bank will be a JSON file following this format:
 - A user shuold not be able to view scores of other users, and someone should not be able to ascertain user scores just by looking at the codebase files.
 - When the quiz is over, the app should print the user's score and ask if they want to play again. If they say yes, another quiz starts with the same settings as before. If not, they go back to the main menu. From there, they can start a new quiz with possible different settings, view their past scores, or exit the app.
 - If I choose to filter on certain difficulties or topics, all questions in the quiz should be from that filtered set. For example, if I choose easy only, all questions should haev dificulty easy
+
+# File structure
+- questions.json: The question bank JSON file.
+- db.py: The database module, responsible for all database operations.
+- main.py: The main module, responsible for running the cli tool. The cli tool calls functions from db.py to interact with the database.
+- sqlite.db: The sqlite database file to store user data and quiz scores and skip information
+- constants.py: Contains constants used throughout the app to avoid magic numbers and hard-coded strings and other values
+- utils.py: Contains utility functions used throughout the app. This keeps our other files clean and focused on their specific responsibilities.
+- __init__.py: Empty file to make the directory a package.
+- tests.py: Contains tests for the app. To the extent possible, this tests the acceptance criteria above, as well as any other edge cases we can think of. Tests are named clearly with what they are testing.
+
+# Tech Stack
+- uv package manager, if any packages are needed
+- sqlite3 for the database
+- your choice of a reasonable python encryption library for the passwords. Use something standard and reliable
+- pytest for testing
