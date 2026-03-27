@@ -1,0 +1,12 @@
+Review the Python code in this project against the spec in @SPEC.md
+For each item in the acceptance criteria, check whether the code
+actually implements it correctly. Also check for:
+- Bugs or logic errors
+- Missing error handling
+- Code quality issues (unclear naming, repeated code, etc.)
+- Security concerns (e.g., unsafe file handling, passowrd leaks, user score data leakage to outside users or codebase onlookers)
+- UX concerns (confusing behavior)
+
+Format your review as a numbered list of findings, each marked as
+[PASS], [FAIL], or [WARN]. Be specific — reference file names and
+line numbers. Feel free to run the cli tool or add more tests if necessary to validate your findings.
