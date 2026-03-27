@@ -8,6 +8,7 @@ from typing import Callable
 
 import db
 from constants import (
+    DB_PATH,
     MAIN_MENU_OPTIONS,
     QUESTION_BANK_PATH,
     QUIZ_MENU_PROMPT,
@@ -257,7 +258,7 @@ def login_or_create_account(input_fn: InputFn, output_fn: OutputFn, db_path: str
 def run_app(
     input_fn: InputFn = input,
     output_fn: OutputFn = print,
-    db_path: str = "sqlite.db",
+    db_path: str = DB_PATH,
     question_bank_path: str = QUESTION_BANK_PATH,
     random_seed: int | None = None,
 ) -> int:
@@ -270,6 +271,7 @@ def run_app(
         return 1
 
     try:
+        db.ensure_db_file(db_path=db_path)
         db.init_db(db_path=db_path)
     except sqlite3.DatabaseError as exc:
         output_fn(f"Fatal database error during initialization: {exc}")

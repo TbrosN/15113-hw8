@@ -4,11 +4,19 @@ from __future__ import annotations
 
 import sqlite3
 from datetime import datetime, timezone
+from pathlib import Path
 from typing import Any
 
 import bcrypt
 
 from constants import DB_PATH
+
+
+def ensure_db_file(db_path: str = DB_PATH) -> None:
+    """Create the SQLite file if it does not already exist."""
+    path = Path(db_path)
+    path.parent.mkdir(parents=True, exist_ok=True)
+    path.touch(exist_ok=True)
 
 
 def _get_connection(db_path: str = DB_PATH) -> sqlite3.Connection:
