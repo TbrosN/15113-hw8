@@ -43,6 +43,7 @@ def test_create_account_and_play_quiz_end_to_end(tmp_path: Path) -> None:
         db_path=db_path,
         question_bank_path="tests/question_banks/valid_mixed.json",
         random_seed=3,
+        password_input_fn=io.input,
     )
     assert exit_code == 0
 

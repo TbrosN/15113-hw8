@@ -5,7 +5,7 @@ from pathlib import Path
 
 import db
 from conftest import ScriptedIO
-from main import run_single_quiz
+from main import run_quiz_with_replay, run_single_quiz
 from utils import load_question_bank
 
 
@@ -81,3 +81,25 @@ def test_non_permanent_skip_does_not_persist(tmp_path: Path) -> None:
         db_path=db_path,
     )
     assert result == (1, 1)
+
+
+def test_replay_loop_exits_when_no_questions_available(tmp_path: Path) -> None:
+    db_path = str(tmp_path / "skip-replay.sqlite")
+    db.init_db(db_path=db_path)
+    user_id = db.create_user("alice", "password", db_path=db_path)
+    questions = load_question_bank(Path("tests/question_banks/valid_single.json"))
+    db.add_permanent_skip(user_id, "single1", db_path=db_path)
+
+    io = ScriptedIO([])
+    run_quiz_with_replay(
+        user_id=user_id,
+        questions=questions,
+        settings=_quiz_settings(),
+        input_fn=io.input,
+        output_fn=io.print,
+        randomizer=random.Random(0),
+        db_path=db_path,
+    )
+
+    assert any("No questions matched" in line for line in io.outputs)
+    assert not any("Quiz complete! Score:" in line for line in io.outputs)

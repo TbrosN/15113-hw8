@@ -34,6 +34,34 @@ def test_empty_question_bank_raises_error() -> None:
         pass
 
 
+def test_question_bank_read_oserror_raises_error(monkeypatch) -> None:
+    test_path = Path("tests/question_banks/valid_mixed.json")
+
+    def _raise_oserror(*_args, **_kwargs) -> str:
+        raise PermissionError("permission denied")
+
+    monkeypatch.setattr(Path, "read_text", _raise_oserror)
+    try:
+        load_question_bank(test_path)
+        assert False, "Expected QuestionBankError for unreadable file."
+    except QuestionBankError:
+        pass
+
+
+def test_question_bank_read_unicode_error_raises_error(monkeypatch) -> None:
+    test_path = Path("tests/question_banks/valid_mixed.json")
+
+    def _raise_unicode_error(*_args, **_kwargs) -> str:
+        raise UnicodeDecodeError("utf-8", b"\x80", 0, 1, "invalid start byte")
+
+    monkeypatch.setattr(Path, "read_text", _raise_unicode_error)
+    try:
+        load_question_bank(test_path)
+        assert False, "Expected QuestionBankError for non-UTF-8 file."
+    except QuestionBankError:
+        pass
+
+
 def test_app_exits_with_fatal_error_for_bad_question_bank(tmp_path: Path) -> None:
     io = ScriptedIO([])
     exit_code = run_app(

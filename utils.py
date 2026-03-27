@@ -84,6 +84,12 @@ def load_question_bank(path: str | Path) -> list[dict[str, Any]]:
         raw_data = json.loads(file_path.read_text(encoding="utf-8"))
     except json.JSONDecodeError as exc:
         raise QuestionBankError(f"Question bank JSON is malformed: {exc}") from exc
+    except UnicodeDecodeError as exc:
+        raise QuestionBankError(
+            f"Question bank file is not valid UTF-8 text: {exc}"
+        ) from exc
+    except OSError as exc:
+        raise QuestionBankError(f"Unable to read question bank file: {exc}") from exc
 
     if not isinstance(raw_data, dict) or "questions" not in raw_data:
         raise QuestionBankError("Question bank JSON must contain a top-level 'questions' key.")

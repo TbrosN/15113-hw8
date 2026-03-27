@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import getpass
 import random
 import sqlite3
 from typing import Callable
@@ -115,7 +116,11 @@ def run_single_quiz(
     randomizer: random.Random,
     db_path: str,
 ) -> tuple[int, int]:
-    skipped_ids = db.get_permanently_skipped_question_ids(user_id, db_path=db_path)
+    try:
+        skipped_ids = db.get_permanently_skipped_question_ids(user_id, db_path=db_path)
+    except sqlite3.DatabaseError:
+        output_fn("Database error while loading skipped questions; treating as none.")
+        skipped_ids = set()
     filtered_questions = filter_questions(
         questions=questions,
         selected_difficulties=settings["difficulties"],
@@ -203,6 +208,8 @@ def run_quiz_with_replay(
             randomizer=randomizer,
             db_path=db_path,
         )
+        if total == 0:
+            return
         output_fn(f"Quiz complete! Score: {correct}/{total}")
         should_replay = prompt_yes_no(
             "Play again with the same settings? (yes/no): ",
@@ -214,7 +221,11 @@ def run_quiz_with_replay(
 
 
 def show_user_scores(user_id: int, output_fn: OutputFn, db_path: str) -> None:
-    scores = db.get_scores_for_user(user_id, db_path=db_path)
+    try:
+        scores = db.get_scores_for_user(user_id, db_path=db_path)
+    except sqlite3.DatabaseError:
+        output_fn("Database error while loading scores.")
+        return
     if not scores:
         output_fn("No scores recorded yet.")
         return
@@ -225,7 +236,12 @@ def show_user_scores(user_id: int, output_fn: OutputFn, db_path: str) -> None:
         )
 
 
-def login_or_create_account(input_fn: InputFn, output_fn: OutputFn, db_path: str) -> int | None:
+def login_or_create_account(
+    input_fn: InputFn,
+    output_fn: OutputFn,
+    db_path: str,
+    password_input_fn: InputFn,
+) -> int | None:
     username = input_fn("Username: ").strip()
     if not username:
         output_fn("Invalid input, expected a non-empty username. Please try again.")
@@ -241,13 +257,13 @@ def login_or_create_account(input_fn: InputFn, output_fn: OutputFn, db_path: str
         )
         if not should_create:
             return None
-        password = input_fn("Create a password: ")
+        password = password_input_fn("Create a password: ")
         if not password:
             output_fn("Invalid input, expected a non-empty password. Please try again.")
             return None
         return db.create_user(username, password, db_path=db_path)
 
-    password = input_fn("Password: ")
+    password = password_input_fn("Password: ")
     user_id = db.authenticate_user(username, password, db_path=db_path)
     if user_id is None:
         output_fn("Invalid credentials. Exiting.")
@@ -261,8 +277,11 @@ def run_app(
     db_path: str = DB_PATH,
     question_bank_path: str = QUESTION_BANK_PATH,
     random_seed: int | None = None,
+    password_input_fn: InputFn | None = None,
 ) -> int:
     randomizer = random.Random(random_seed)
+    if password_input_fn is None:
+        password_input_fn = getpass.getpass
 
     try:
         questions = load_question_bank(question_bank_path)
@@ -278,7 +297,12 @@ def run_app(
         return 1
 
     try:
-        user_id = login_or_create_account(input_fn, output_fn, db_path)
+        user_id = login_or_create_account(
+            input_fn=input_fn,
+            output_fn=output_fn,
+            db_path=db_path,
+            password_input_fn=password_input_fn,
+        )
     except sqlite3.DatabaseError as exc:
         output_fn(f"Fatal database error during login: {exc}")
         return 1
