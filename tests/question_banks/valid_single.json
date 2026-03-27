@@ -1,0 +1,12 @@
+{
+  "questions": [
+    {
+      "id": "single1",
+      "question": "Two Sum high-level approach?",
+      "type": "short_answer",
+      "answer": "hash map",
+      "topic": "Arrays",
+      "difficulty": "easy"
+    }
+  ]
+}

@@ -1,0 +1,76 @@
+{
+  "questions": [
+    {
+      "id": "lc-1",
+      "question": "LeetCode #1 Two Sum: Given an integer array and a target, return indices of two numbers that sum to target. What high-level approach should you use?",
+      "type": "short_answer",
+      "answer": "single-pass hash map for complements",
+      "category": "LeetCode",
+      "topic": "Arrays and Hashing",
+      "difficulty": "easy"
+    },
+    {
+      "id": "lc-3",
+      "question": "LeetCode #3 Longest Substring Without Repeating Characters: Find the length of the longest substring without duplicates. What approach is best?",
+      "type": "short_answer",
+      "answer": "sliding window with hash set or map",
+      "category": "LeetCode",
+      "topic": "Sliding Window",
+      "difficulty": "medium"
+    },
+    {
+      "id": "lc-15",
+      "question": "LeetCode #15 3Sum: Return all unique triplets that sum to zero. What high-level algorithm should you use?",
+      "type": "short_answer",
+      "answer": "sort then two pointers with duplicate skipping",
+      "category": "LeetCode",
+      "topic": "Two Pointers",
+      "difficulty": "medium"
+    },
+    {
+      "id": "lc-42",
+      "question": "LeetCode #42 Trapping Rain Water: Compute trapped water between bars. What strategy is typically optimal?",
+      "type": "short_answer",
+      "answer": "two pointers tracking left and right max",
+      "category": "LeetCode",
+      "topic": "Two Pointers",
+      "difficulty": "hard"
+    },
+    {
+      "id": "lc-56",
+      "question": "LeetCode #56 Merge Intervals: Merge overlapping intervals. What high-level approach should you apply?",
+      "type": "short_answer",
+      "answer": "sort by start and greedily merge",
+      "category": "LeetCode",
+      "topic": "Intervals",
+      "difficulty": "medium"
+    },
+    {
+      "id": "lc-102",
+      "question": "LeetCode #102 Binary Tree Level Order Traversal: Return values level by level. Which strategy is standard?",
+      "type": "short_answer",
+      "answer": "breadth-first search with a queue",
+      "category": "LeetCode",
+      "topic": "Trees",
+      "difficulty": "medium"
+    },
+    {
+      "id": "lc-200",
+      "question": "LeetCode #200 Number of Islands: Count connected components of land in a grid. Which approach should you use?",
+      "type": "short_answer",
+      "answer": "graph traversal using dfs or bfs flood fill",
+      "category": "LeetCode",
+      "topic": "Graphs",
+      "difficulty": "medium"
+    },
+    {
+      "id": "lc-215",
+      "question": "LeetCode #215 Kth Largest Element in an Array: Find the kth largest value. What high-level approach is preferred?",
+      "type": "short_answer",
+      "answer": "min heap of size k or quickselect",
+      "category": "LeetCode",
+      "topic": "Heap / Selection",
+      "difficulty": "medium"
+    }
+  ]
+}

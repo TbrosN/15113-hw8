@@ -1,0 +1,83 @@
+from __future__ import annotations
+
+import random
+from pathlib import Path
+
+import db
+from conftest import ScriptedIO
+from main import run_single_quiz
+from utils import load_question_bank
+
+
+def _quiz_settings() -> dict:
+    return {
+        "question_count": 1,
+        "difficulties": {"easy", "medium", "hard"},
+        "topics": {"Arrays"},
+    }
+
+
+def test_permanent_skip_persists_between_quizzes(tmp_path: Path) -> None:
+    db_path = str(tmp_path / "skip.sqlite")
+    db.init_db(db_path=db_path)
+    user_id = db.create_user("alice", "password", db_path=db_path)
+    questions = load_question_bank(Path("tests/question_banks/valid_single.json"))
+
+    io = ScriptedIO(["skip", "yes"])
+    run_single_quiz(
+        user_id=user_id,
+        questions=questions,
+        settings=_quiz_settings(),
+        input_fn=io.input,
+        output_fn=io.print,
+        randomizer=random.Random(0),
+        db_path=db_path,
+    )
+
+    assert db.is_permanently_skipped(user_id, "single1", db_path=db_path)
+
+    io_second = ScriptedIO([])
+    result = run_single_quiz(
+        user_id=user_id,
+        questions=questions,
+        settings=_quiz_settings(),
+        input_fn=io_second.input,
+        output_fn=io_second.print,
+        randomizer=random.Random(0),
+        db_path=db_path,
+    )
+
+    assert result == (0, 0)
+    assert any("No questions matched" in line for line in io_second.outputs)
+
+
+def test_non_permanent_skip_does_not_persist(tmp_path: Path) -> None:
+    db_path = str(tmp_path / "skip-temp.sqlite")
+    db.init_db(db_path=db_path)
+    user_id = db.create_user("alice", "password", db_path=db_path)
+    questions = load_question_bank(Path("tests/question_banks/valid_single.json"))
+
+    io = ScriptedIO(["skip", "no"])
+    run_single_quiz(
+        user_id=user_id,
+        questions=questions,
+        settings=_quiz_settings(),
+        input_fn=io.input,
+        output_fn=io.print,
+        randomizer=random.Random(0),
+        db_path=db_path,
+    )
+
+    assert not db.is_permanently_skipped(user_id, "single1", db_path=db_path)
+
+    io_second = ScriptedIO(["hash map"])
+    result = run_single_quiz(
+        user_id=user_id,
+        questions=questions,
+        settings=_quiz_settings(),
+        input_fn=io_second.input,
+        output_fn=io_second.print,
+        randomizer=random.Random(0),
+        db_path=db_path,
+    )
+    assert result == (1, 1)

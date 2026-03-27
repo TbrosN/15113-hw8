@@ -1,0 +1,18 @@
+[project]
+name = "leetcode-quiz-cli"
+version = "0.1.0"
+description = "CLI quiz app for LeetCode high-level strategy practice"
+readme = "SPEC.md"
+requires-python = ">=3.11"
+dependencies = [
+  "bcrypt>=4.2.0",
+]
+
+[dependency-groups]
+dev = [
+  "pytest>=8.3.0",
+]
+
+[tool.pytest.ini_options]
+pythonpath = ["."]
+testpaths = ["tests"]

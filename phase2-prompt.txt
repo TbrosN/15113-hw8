@@ -1,0 +1,1 @@
+Implement the spec @SPEC.md . Follow all specifications, creating necessary files, installing necessary pakages, and writing and running tests to verify your implementation. For the (non-testing) question bank, please search the web for some real leetcode problems to use. Keep the question bank to about 5-10 quetsions for now.

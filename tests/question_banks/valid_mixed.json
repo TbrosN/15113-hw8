@@ -1,0 +1,36 @@
+{
+  "questions": [
+    {
+      "id": "q1",
+      "question": "Two Sum high-level approach?",
+      "type": "short_answer",
+      "answer": "hash map",
+      "topic": "Arrays",
+      "difficulty": "easy"
+    },
+    {
+      "id": "q2",
+      "question": "Binary search tree validation approach?",
+      "type": "short_answer",
+      "answer": "inorder traversal bounds",
+      "topic": "Trees",
+      "difficulty": "medium"
+    },
+    {
+      "id": "q3",
+      "question": "Count islands approach?",
+      "type": "short_answer",
+      "answer": "dfs flood fill",
+      "topic": "Graphs",
+      "difficulty": "medium"
+    },
+    {
+      "id": "q4",
+      "question": "Trap rain water approach?",
+      "type": "short_answer",
+      "answer": "two pointers",
+      "topic": "Two Pointers",
+      "difficulty": "hard"
+    }
+  ]
+}
