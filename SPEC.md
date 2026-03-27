@@ -74,7 +74,8 @@ The question bank will be a JSON file following this format:
 - constants.py: Contains constants used throughout the app to avoid magic numbers and hard-coded strings and other values
 - utils.py: Contains utility functions used throughout the app. This keeps our other files clean and focused on their specific responsibilities.
 - __init__.py: Empty file to make the directory a package.
-- tests.py: Contains tests for the app. To the extent possible, this tests the acceptance criteria above, as well as any other edge cases we can think of. Tests are named clearly with what they are testing.
+- tests/*.py: Contains tests for the app. To the extent possible, this tests the acceptance criteria above, as well as any other edge cases we can think of. Tests are named clearly with what they are testing.
+- tests/question_banks/*.json: Contains question banks for testing. Includes malformed, empty, and valid question banks of different sizes and with different difficulty and topic distributions.
 
 # Tech Stack
 - uv package manager, if any packages are needed
