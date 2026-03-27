@@ -27,6 +27,61 @@ def _parse_csv_choices(raw_value: str) -> set[str]:
     return {piece.strip().lower() for piece in raw_value.split(",") if piece.strip()}
 
 
+def _multiple_choice_letters(option_count: int) -> list[str]:
+    return [chr(ord("A") + index) for index in range(option_count)]
+
+
+def _to_expected_answer_list(question: dict) -> list[str]:
+    raw_answer = question["answer"]
+    if isinstance(raw_answer, list):
+        return [str(answer).strip() for answer in raw_answer]
+    return [str(raw_answer).strip()]
+
+
+def _resolve_expected_answers(question: dict) -> list[str]:
+    if question.get("type") != "multiple_choice":
+        return _to_expected_answer_list(question)
+    options = question.get("options", [])
+    resolved_answers: list[str] = []
+    for answer in _to_expected_answer_list(question):
+        if len(answer) == 1 and answer.upper() in _multiple_choice_letters(len(options)):
+            answer_index = ord(answer.upper()) - ord("A")
+            resolved_answers.append(str(options[answer_index]))
+            continue
+        resolved_answers.append(answer)
+    return resolved_answers
+
+
+def _resolve_response_selection(question: dict, response: str) -> set[str]:
+    if question.get("type") != "multiple_choice":
+        return {normalize_answer(response)}
+
+    options = question.get("options", [])
+    letters = _multiple_choice_letters(len(options))
+    selected: set[str] = set()
+    for raw_piece in response.split(","):
+        piece = raw_piece.strip()
+        if not piece:
+            continue
+        if len(piece) == 1 and piece.upper() in letters:
+            option = str(options[ord(piece.upper()) - ord("A")])
+            selected.add(normalize_answer(option))
+        else:
+            selected.add(normalize_answer(piece))
+    return selected
+
+
+def _is_correct_response(question: dict, response: str) -> bool:
+    response_normalized = normalize_answer(response)
+    expected_answers = _resolve_expected_answers(question)
+    expected_normalized = {normalize_answer(answer) for answer in expected_answers}
+    if question.get("type") != "multiple_choice":
+        return response_normalized in expected_normalized
+
+    selected_normalized = _resolve_response_selection(question, response)
+    return bool(selected_normalized.intersection(expected_normalized))
+
+
 def _prompt_difficulty_filters(input_fn: InputFn, output_fn: OutputFn) -> set[str]:
     prompt = (
         "Select difficulties (all or comma-separated easy,medium,hard): "
@@ -138,6 +193,7 @@ def run_single_quiz(
         randomizer=randomizer,
     )
     correct_answers = 0
+    scored_questions = 0
 
     for index, question in enumerate(selected_questions, start=1):
         output_fn("")
@@ -145,9 +201,18 @@ def run_single_quiz(
             f"[{index}/{selected_count}] ({question['difficulty']}, {question['topic']})"
         )
         output_fn(question["question"])
-        response = input_fn(
-            "Your high-level strategy answer (or 'skip' to skip this question): "
-        ).strip()
+        if question.get("type") == "multiple_choice":
+            for option_index, option in enumerate(question.get("options", [])):
+                letter = chr(ord("A") + option_index)
+                output_fn(f"  {letter}. {option}")
+            response_prompt = (
+                "Your answer (option letter/text; comma-separate for multiple, or 'skip'): "
+            )
+        else:
+            response_prompt = (
+                "Your high-level strategy answer (or 'skip' to skip this question): "
+            )
+        response = input_fn(response_prompt).strip()
         if normalize_answer(response) == SKIP_TOKEN:
             should_skip_forever = prompt_yes_no(
                 "Always skip this question in the future? (yes/no): ",
@@ -162,12 +227,15 @@ def run_single_quiz(
                     output_fn("Database error while saving skip; continuing quiz.")
             continue
 
-        is_correct = normalize_answer(response) == normalize_answer(question["answer"])
+        scored_questions += 1
+        is_correct = _is_correct_response(question, response)
         if is_correct:
             correct_answers += 1
             output_fn("Correct.")
         else:
-            output_fn(f"Incorrect. Expected strategy: {question['answer']}")
+            expected_answers = _resolve_expected_answers(question)
+            expected_display = ", ".join(expected_answers)
+            output_fn(f"Incorrect. Expected strategy: {expected_display}")
         try:
             db.record_answer(
                 user_id=user_id,
@@ -181,12 +249,16 @@ def run_single_quiz(
         except sqlite3.DatabaseError:
             output_fn("Database error while saving answer metadata; continuing quiz.")
 
+    if scored_questions == 0:
+        output_fn("No scored questions this round (all questions were skipped).")
+        return (0, 0)
+
     try:
-        db.record_score(user_id, correct_answers, selected_count, db_path=db_path)
+        db.record_score(user_id, correct_answers, scored_questions, db_path=db_path)
     except sqlite3.DatabaseError:
         output_fn("Database error while saving score; continuing.")
 
-    return (correct_answers, selected_count)
+    return (correct_answers, scored_questions)
 
 
 def run_quiz_with_replay(

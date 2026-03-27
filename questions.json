@@ -2,72 +2,120 @@
   "questions": [
     {
       "id": "lc-1",
-      "question": "LeetCode #1 Two Sum: Given an integer array and a target, return indices of two numbers that sum to target. What high-level approach should you use?",
-      "type": "short_answer",
-      "answer": "single-pass hash map for complements",
+      "question": "LeetCode #1 Two Sum: Given an integer array and a target, return indices of two different numbers that add to the target. Which data structure(s) can give an efficient solution?",
+      "type": "multiple_choice",
+      "options": [
+        "Hash map",
+        "Queue",
+        "Stack",
+        "Linked list"
+      ],
+      "answer": "Hash map",
       "category": "LeetCode",
       "topic": "Arrays and Hashing",
       "difficulty": "easy"
     },
     {
       "id": "lc-3",
-      "question": "LeetCode #3 Longest Substring Without Repeating Characters: Find the length of the longest substring without duplicates. What approach is best?",
-      "type": "short_answer",
-      "answer": "sliding window with hash set or map",
+      "question": "LeetCode #3 Longest Substring Without Repeating Characters: Given a string, return the length of the longest substring with all unique characters. Which data structure(s) can give an efficient solution?",
+      "type": "multiple_choice",
+      "options": [
+        "Hash set",
+        "Hash map",
+        "Queue",
+        "Heap"
+      ],
+      "answer": ["Hash set", "Hash map"],
       "category": "LeetCode",
       "topic": "Sliding Window",
       "difficulty": "medium"
     },
     {
       "id": "lc-15",
-      "question": "LeetCode #15 3Sum: Return all unique triplets that sum to zero. What high-level algorithm should you use?",
-      "type": "short_answer",
-      "answer": "sort then two pointers with duplicate skipping",
+      "question": "LeetCode #15 3Sum: Given an integer array, return all unique triplets [a,b,c] such that a+b+c=0. Which data structure(s) are part of an efficient solution?",
+      "type": "multiple_choice",
+      "options": [
+        "Sorted array with two pointers",
+        "Queue",
+        "Trie",
+        "Linked list"
+      ],
+      "answer": "Sorted array with two pointers",
       "category": "LeetCode",
       "topic": "Two Pointers",
       "difficulty": "medium"
     },
     {
       "id": "lc-42",
-      "question": "LeetCode #42 Trapping Rain Water: Compute trapped water between bars. What strategy is typically optimal?",
-      "type": "short_answer",
-      "answer": "two pointers tracking left and right max",
+      "question": "LeetCode #42 Trapping Rain Water: Given non-negative bar heights, compute how much rainwater is trapped after raining. Which data structure(s) can give an efficient solution?",
+      "type": "multiple_choice",
+      "options": [
+        "Two pointers",
+        "Monotonic stack",
+        "Queue",
+        "Union-find"
+      ],
+      "answer": ["Two pointers", "Monotonic stack"],
       "category": "LeetCode",
       "topic": "Two Pointers",
       "difficulty": "hard"
     },
     {
       "id": "lc-56",
-      "question": "LeetCode #56 Merge Intervals: Merge overlapping intervals. What high-level approach should you apply?",
-      "type": "short_answer",
-      "answer": "sort by start and greedily merge",
+      "question": "LeetCode #56 Merge Intervals: Given a list of intervals [start,end], merge all overlapping intervals and return non-overlapping intervals covering the same ranges. Which data structure(s) are used in an efficient solution?",
+      "type": "multiple_choice",
+      "options": [
+        "Sorted array/list of intervals",
+        "Queue",
+        "Disjoint set",
+        "Trie"
+      ],
+      "answer": "Sorted array/list of intervals",
       "category": "LeetCode",
       "topic": "Intervals",
       "difficulty": "medium"
     },
     {
       "id": "lc-102",
-      "question": "LeetCode #102 Binary Tree Level Order Traversal: Return values level by level. Which strategy is standard?",
-      "type": "short_answer",
-      "answer": "breadth-first search with a queue",
+      "question": "LeetCode #102 Binary Tree Level Order Traversal: Given a binary tree root, return node values level by level from left to right. Which data structure is the key for an efficient solution?",
+      "type": "multiple_choice",
+      "options": [
+        "Queue",
+        "Stack",
+        "Heap",
+        "Hash map"
+      ],
+      "answer": "Queue",
       "category": "LeetCode",
       "topic": "Trees",
       "difficulty": "medium"
     },
     {
       "id": "lc-200",
-      "question": "LeetCode #200 Number of Islands: Count connected components of land in a grid. Which approach should you use?",
-      "type": "short_answer",
-      "answer": "graph traversal using dfs or bfs flood fill",
+      "question": "LeetCode #200 Number of Islands: Given an m x n grid of '1' (land) and '0' (water), count how many connected islands there are. Which data structure(s) can give an efficient solution?",
+      "type": "multiple_choice",
+      "options": [
+        "Stack",
+        "Queue",
+        "Heap",
+        "Fenwick tree"
+      ],
+      "answer": ["Stack", "Queue"],
       "category": "LeetCode",
       "topic": "Graphs",
       "difficulty": "medium"
     },
     {
       "id": "lc-215",
-      "question": "LeetCode #215 Kth Largest Element in an Array: Find the kth largest value. What high-level approach is preferred?",
-      "type": "short_answer",
-      "answer": "min heap of size k or quickselect",
+      "question": "LeetCode #215 Kth Largest Element in an Array: Given an unsorted array and integer k, return the kth largest element (not kth distinct). Which data structure can give an efficient solution?",
+      "type": "multiple_choice",
+      "options": [
+        "Min-heap",
+        "Queue",
+        "Trie",
+        "Linked list"
+      ],
+      "answer": "Min-heap",
       "category": "LeetCode",
       "topic": "Heap / Selection",
       "difficulty": "medium"

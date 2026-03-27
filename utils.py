@@ -59,13 +59,18 @@ def prompt_int(
 
 
 def _validate_question(question: dict[str, Any]) -> None:
-    required = {"id", "question", "answer", "difficulty", "topic"}
+    required = {"id", "question", "type", "answer", "difficulty", "topic"}
     missing = required - question.keys()
     if missing:
         missing_values = ", ".join(sorted(missing))
         raise QuestionBankError(
             f"Question is missing required field(s): {missing_values}"
         )
+
+    question_type = str(question["type"]).strip().lower()
+    if question_type not in {"multiple_choice", "short_answer", "true_false"}:
+        raise QuestionBankError(f"Question has invalid type '{question['type']}'.")
+
     difficulty = str(question["difficulty"]).strip().lower()
     if difficulty not in {"easy", "medium", "hard"}:
         raise QuestionBankError(
@@ -73,6 +78,35 @@ def _validate_question(question: dict[str, Any]) -> None:
         )
     if not str(question["id"]).strip():
         raise QuestionBankError("Question id must be non-empty.")
+
+    if question_type == "multiple_choice":
+        options = question.get("options")
+        if not isinstance(options, list) or len(options) < 2:
+            raise QuestionBankError(
+                "Multiple-choice question must include an 'options' list with >=2 entries."
+            )
+        normalized_options = [str(option).strip() for option in options]
+        if any(not option for option in normalized_options):
+            raise QuestionBankError("Multiple-choice options must be non-empty strings.")
+
+        answer_candidates: list[str]
+        if isinstance(question["answer"], list):
+            answer_candidates = [str(answer).strip() for answer in question["answer"]]
+        else:
+            answer_candidates = [str(question["answer"]).strip()]
+
+        if not answer_candidates or any(not answer for answer in answer_candidates):
+            raise QuestionBankError("Question answer must be non-empty.")
+
+        valid_letters = {chr(ord("A") + index) for index in range(len(normalized_options))}
+        for answer in answer_candidates:
+            if len(answer) == 1 and answer.upper() in valid_letters:
+                continue
+            if answer in normalized_options:
+                continue
+            raise QuestionBankError(
+                "Multiple-choice answer must match an option text or option letter."
+            )
 
 
 def load_question_bank(path: str | Path) -> list[dict[str, Any]]:
@@ -108,8 +142,16 @@ def load_question_bank(path: str | Path) -> list[dict[str, Any]]:
             raise QuestionBankError(f"Duplicate question id found: '{question_id}'.")
         seen_ids.add(question_id)
         question["id"] = question_id
+        question["type"] = str(question["type"]).strip().lower()
         question["difficulty"] = str(question["difficulty"]).strip().lower()
         question["topic"] = str(question["topic"]).strip()
-        question["answer"] = str(question["answer"]).strip()
+        if isinstance(question["answer"], list):
+            question["answer"] = [str(answer).strip() for answer in question["answer"]]
+        else:
+            question["answer"] = str(question["answer"]).strip()
+        if question["type"] == "multiple_choice":
+            question["options"] = [
+                str(option).strip() for option in question.get("options", [])
+            ]
 
     return questions
